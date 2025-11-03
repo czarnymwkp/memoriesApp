@@ -1,11 +1,20 @@
+import { ThemeProvider } from 'styled-components'
+import { theme } from './app/theme'
 import './App.css'
+import { GlobalStyle } from './app/GlobalStyle'
+import { RouterProvider } from 'react-router-dom'
+import { router } from './app/router'
+import { AuthProvider } from './features/auth/AuthContext'
 
 function App() {
   return (
-    <>
-      <p>Memories</p>
-      <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Repudiandae saepe maiores quasi! Quos sunt nostrum rem, aliquam veniam ea unde atque distinctio eligendi amet voluptates nulla quibusdam hic dolores nam?</p>
-    </>
+    <ThemeProvider theme={theme}>
+      <GlobalStyle />
+      <AuthProvider>
+        <RouterProvider router={router}></RouterProvider>
+      </AuthProvider>
+    </ThemeProvider>
+
   )
 }
 export default App
