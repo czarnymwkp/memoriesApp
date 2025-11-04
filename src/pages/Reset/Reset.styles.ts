@@ -1,5 +1,5 @@
-import { Link } from "react-router-dom"
 import styled from "styled-components"
+import { Link } from "react-router-dom"
 
 export const Wrapper = styled.div`
   display: flex;
@@ -16,7 +16,7 @@ export const Box = styled.form`
   display: flex;
   flex-direction: column;
   gap: 12px;
-  width: 320px;
+  width: 360px;
   box-shadow: 0 8px 24px rgba(0,0,0,0.35);
 `
 
@@ -49,9 +49,17 @@ export const Error = styled.p`
   margin: 4px 0 0;
   font-size: 0.9rem;
 `
-export const Helper = styled.p`
-margin: 8px 0 0; 
-font-size:.9rem; 
-opacity:.9;`
 
-export const LinkButton = styled(Link)`color:${({ theme }) => theme.colors.accent};`
+export const Success = styled.p`
+  color: #8bd17c;
+  margin: 4px 0 0;
+  font-size: 0.95rem;
+`
+
+export const Helper = styled.p`
+  margin: 8px 0 0; font-size:.9rem; opacity:.9;
+`
+
+export const LinkButton = styled(Link)`
+  color: ${({ theme }) => theme.colors.accent};
+`

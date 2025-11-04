@@ -1,5 +1,5 @@
-import { Link } from "react-router-dom"
 import styled from "styled-components"
+import { Link } from "react-router-dom"
 
 export const Wrapper = styled.div`
   display: flex;
@@ -49,9 +49,11 @@ export const Error = styled.p`
   margin: 4px 0 0;
   font-size: 0.9rem;
 `
-export const Helper = styled.p`
-margin: 8px 0 0; 
-font-size:.9rem; 
-opacity:.9;`
 
-export const LinkButton = styled(Link)`color:${({ theme }) => theme.colors.accent};`
+export const Helper = styled.p`
+  margin: 8px 0 0; font-size:.9rem; opacity:.9;
+`
+
+export const LinkButton = styled(Link)`
+  color: ${({ theme }) => theme.colors.accent};
+`
