@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom"
 import * as S from "./Register.styles"
 import { createUserWithEmailAndPassword, sendEmailVerification, updateProfile } from "firebase/auth"
 import { auth } from "../../lib/firebase"
+import { FirebaseError } from "firebase/app"
 
 export const Register = () => {
     const [email, setEmail] = useState("")
@@ -25,9 +26,10 @@ export const Register = () => {
             try { await sendEmailVerification(cred.user) } catch { /* empty */ }
             navigate("/library", { replace: true })
         }
-        catch (err: any) {
-            const code = err?.code as string | undefined
-            setError(mapError(code))
+        catch (err: unknown) {
+            if (err instanceof FirebaseError) {
+                setError(mapError(err.code))
+            }
         }
         finally {
             setLoading(false)

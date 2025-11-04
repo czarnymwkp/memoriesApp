@@ -51,6 +51,7 @@ export const Login = () => {
                     {loading ? "Logowanie..." : "Zaloguj"}
                 </S.Button>
                 <S.Helper>Nie masz konta??<S.LinkButton to="/register"> Zarejestruj się</S.LinkButton></S.Helper>
+                <S.Helper> Nie pamiętasz hasła <S.LinkButton to={"/reset"}> Zresetuj hasło</S.LinkButton> </S.Helper>
             </S.Box>
         </S.Wrapper>
     )
