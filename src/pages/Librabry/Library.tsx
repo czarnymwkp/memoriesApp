@@ -1,32 +1,58 @@
-import * as S from "./Library.style"
+import { useEffect, useState } from "react"
 import { useAuth } from "../../features/auth/AuthContext"
+import { collection, getDocs, query, where } from "firebase/firestore"
+import { db } from "../../lib/firebase"
+import * as S from "./Library.style"
+
+type Album = {
+    id: string,
+    title: string,
+    coverUrl: string | null
+}
+
 export const Library = () => {
     const { user, logout } = useAuth()
+    const [albums, setAlbums] = useState<Album[]>([])
 
-    const mockALbum = Array.from({ length: 8 }).map((_, i) => (
-        {
-            id: String(i + 1),
-            title: `Album ${i + 1}`,
-            coverUrl: ""
-        }
-    ))
+    const email = user?.email ?? ""
+
+    useEffect(() => {
+        if (!email) return
+
+            ; (async () => {
+
+                const q = query(
+                    collection(db, "albums"),
+                    where("clientEmails", "array-contains", email)
+                )
+
+                const snap = await getDocs(q)
+                const rows: Album[] = snap.docs.map(docSnap => {
+                    const data = docSnap.data() as any
+                    return {
+                        id: docSnap.id,
+                        title: data.title ?? "",
+                        coverUrl: data.coverUrl ?? null,
+                    }
+                })
+                setAlbums(rows)
+            })()
+    }, [email])
+
     return (
-        <S.Page>
-            <S.HeaderBar>
-                <S.Brand>Memories</S.Brand>
-                <S.Spacer></S.Spacer>
-                <S.User>{user?.email}</S.User>
-                <S.Button onClick={logout}>Wyloguj</S.Button>
-            </S.HeaderBar>
-            <S.SectionTitle>Twój album</S.SectionTitle>
-            <S.Grid>
-                {mockALbum.map(a => (
-                    <S.Tile key={a.id} title={a.title}>
-                        <S.Cover />
-                        <S.TileTitle>{a.title}</S.TileTitle>
-                    </S.Tile>
-                ))}
-            </S.Grid>
-        </S.Page>
+        <S.Grid>
+            {albums.map(album => (
+                <S.Tile key={album.id} title={album.title}>
+                    {album.coverUrl ? (
+                        <S.Cover style={{ backgroundImage: `url(${album.coverUrl})` }} />
+                    ) : (<S.Cover />)}
+                    <S.TileTitle>{album.title}</S.TileTitle>
+                </S.Tile>
+            ))}
+
+            {albums.length === 0 && (<S.Tile>Nie masz jeszcze albumów</S.Tile>)}
+        </S.Grid>
     )
 }
+
+
