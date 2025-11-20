@@ -1,20 +1,44 @@
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import * as S from "./Admin.styles"
 
 import { AlbumsTable, type AlbumRow } from "./AlbumsTable"
 import { AlbumForm, type NewAlbum } from "./AlbumForm"
 
-import { ref, uploadBytes, getDownloadURL } from "firebase/storage"
+import { ref, uploadBytes, getDownloadURL, deleteObject } from "firebase/storage"
 import { db, storage } from "../../lib/firebase"
 
 import {
     doc,
     setDoc,
-    serverTimestamp
+    serverTimestamp,
+    collection,
+    getDocs,
+    deleteDoc,
 } from "firebase/firestore"
 
 export const Admin = () => {
     const [albums, setAlbums] = useState<AlbumRow[]>([])
+
+    useEffect(() => {
+        const load = async () => {
+            const snap = await getDocs(collection(db, "albums"))
+            const rows = snap.docs.map(doc => {
+                // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                const data = doc.data() as any
+
+                return {
+                    id: doc.id,
+                    title: data.title,
+                    clients: data.clientsEmails ?? [],
+                    createdAt: data.createdAt?.toMillis?.() ?? Date.now(),
+                    coverPreviewUrl: data.coverUrl ?? "",
+                    audioUrl: data.audioUrl ?? ""
+                }
+            })
+            setAlbums(rows)
+        }
+        load()
+    })
 
     const handleCreate = async (data: NewAlbum) => {
         console.log("START HANDLE CREATE", data)
@@ -75,8 +99,44 @@ export const Admin = () => {
 
 
     const handleDelete = async (id: string) => {
-        setAlbums(prev => prev.filter(a => a.id !== id))
+        try {
+            const assetsSnap = await getDocs(collection(db, "albums", id, "assets"))
+
+            for (const asset of assetsSnap.docs) {
+                const data = asset.data() as any
+
+                if (data.storagePath) {
+                    console.log("USUWAM ASSET:", data.storagePath)
+                    await deleteObject(ref(storage, data.storagePath))
+                }
+
+                await deleteDoc(asset.ref)
+            }
+            const albumSnap = await getDocs(collection(db, "albums"))
+            const album = albumSnap.docs.find(d => d.id === id)
+
+            if (album) {
+                const data = album.data() as any
+
+                if (data.coverUrl) {
+                    const url = new URL(data.coverUrl)
+                    const raw = url.pathname.split("/o/")[1]
+                    const decoded = decodeURIComponent(raw).replace(/^\//, "")
+
+                    console.log("USUWAM OKŁADKĘ:", decoded)
+
+                    await deleteObject(ref(storage, decoded))
+                }
+            }
+            await deleteDoc(doc(db, "albums", id))
+            setAlbums(prev => prev.filter(a => a.id !== id))
+
+        } catch (err) {
+            console.error("Błąd usuwania albumu:", err)
+        }
     }
+
+
 
     return (
         <S.Page>

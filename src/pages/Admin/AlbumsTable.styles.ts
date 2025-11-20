@@ -48,6 +48,8 @@ export const Tag = styled.span`
 `
 
 export const Danger = styled.button`
+  margin: 5px;
+  width:100%;
   background: #b22;
   color: #fff;
   border: none;
@@ -55,3 +57,24 @@ export const Danger = styled.button`
   border-radius: 6px;
   font-weight: 600;
 `
+export const Actions = styled.div`
+  display: flex;
+  gap: 8px;
+`
+
+export const Btn = styled.button`
+  margin: 5px;
+  padding: 6px 12px;
+  font-size: 0.9rem;
+  border-radius: 6px;
+  background: #444;
+  color: white;
+  width:100%;
+  border: 1px solid #666;
+  cursor: pointer;
+
+  &:hover {
+    background: #555;
+  }
+`
+
