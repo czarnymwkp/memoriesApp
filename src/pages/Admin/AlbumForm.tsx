@@ -68,7 +68,6 @@ export const AlbumForm = ({ onCreate }: { onCreate: (data: NewAlbum) => void }) 
                     value={title}
                     onChange={(e) => setTitle(e.target.value)}
                     placeholder="np. Jan i Maria"
-                    onKeyDown={e => { if (e.key === "Enter") { e.preventDefault(); addClient() } }}
                 />
             </S.Field>
             <S.Field>
@@ -78,7 +77,13 @@ export const AlbumForm = ({ onCreate }: { onCreate: (data: NewAlbum) => void }) 
                         value={clientInput}
                         onChange={e => setClientInput(e.target.value)}
                         placeholder="np: karol@domena.pl"
-                        onKeyDown={e => { if (e.key === "Enter") { e.preventDefault() } }}
+                        onKeyDown={e => {
+                            if (e.key === "Enter") {
+                                e.preventDefault();
+                                addClient();
+                            }
+                        }}
+
                     />
                     <S.SmallBtn type="button" onClick={addClient}>Dodaj</S.SmallBtn>
                 </S.Row>
