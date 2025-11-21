@@ -56,7 +56,10 @@ export const Library = () => {
 
                 {albums.length === 0 && (<S.Tile>Nie masz jeszcze albumów</S.Tile>)}
             </S.Grid>
-            <S.Grid><S.Button onClick={logout}>Wyloguj</S.Button></S.Grid>
+            <S.Grid>
+                <S.Button onClick={logout}>Wyloguj</S.Button>
+                <S.Button onClick={() => navigate("/admin")}>Admin</S.Button>
+            </S.Grid>
         </>
     )
 }

@@ -49,17 +49,17 @@ export const Admin = () => {
 
         try {
             if (data.coverFile) {
-                console.log("START UPLOAD", data.coverFile)
+                const safeName = data.coverFile.name
+                    .normalize("NFD")
+                    .replace(/[\u0300-\u036f]/g, "")
+                    .replace(/[^a-zA-Z0-9.\-_]/g, "_")
+                    .toLowerCase()
 
-                const path = `albums/${albumId}/cover/${data.coverFile.name}`
+                const path = `albums/${albumId}/cover/${safeName}`
                 const storageRef = ref(storage, path)
 
                 await uploadBytes(storageRef, data.coverFile)
-
-                console.log("UPLOAD DONE")
-
                 coverUrl = await getDownloadURL(storageRef)
-                console.log("DOWNLOAD URL", coverUrl)
             }
 
             console.log("BEFORE FIRESTORE WRITE")
@@ -103,6 +103,7 @@ export const Admin = () => {
             const assetsSnap = await getDocs(collection(db, "albums", id, "assets"))
 
             for (const asset of assetsSnap.docs) {
+                // eslint-disable-next-line @typescript-eslint/no-explicit-any
                 const data = asset.data() as any
 
                 if (data.storagePath) {
@@ -116,6 +117,7 @@ export const Admin = () => {
             const album = albumSnap.docs.find(d => d.id === id)
 
             if (album) {
+                // eslint-disable-next-line @typescript-eslint/no-explicit-any
                 const data = album.data() as any
 
                 if (data.coverUrl) {
